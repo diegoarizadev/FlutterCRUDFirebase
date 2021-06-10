@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:patronbloc/src/utils/utils.dart' as utils;
 
-class ProductPage extends StatelessWidget {
-  const ProductPage({Key? key}) : super(key: key);
+class ProductPage extends StatefulWidget {
+  //const ProductPage({Key? key}) : super(key: key);
 
+  @override
+  _ProductPageState createState() => _ProductPageState();
+}
+
+class _ProductPageState extends State<ProductPage> {
+  final formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,6 +30,7 @@ class ProductPage extends StatelessWidget {
         child: Container(
           padding: EdgeInsets.all(15.0),
           child: Form(
+            key: formKey,
             child: Column(
               children: [
                 _createName(),
@@ -42,6 +50,14 @@ class ProductPage extends StatelessWidget {
       decoration: InputDecoration(
         labelText: 'Nombre del Producto',
       ),
+      validator: (value) {
+        //Se debe retornar un error, en casso de no existir un error se retorna null
+        if (value!.length < 3) {
+          return 'Ingrese el nombre del producto'; //Este es el error.
+        } else {
+          return null;
+        }
+      },
     );
   }
 
@@ -53,6 +69,14 @@ class ProductPage extends StatelessWidget {
       decoration: InputDecoration(
         labelText: 'Valor',
       ),
+      validator: (value) {
+        //Se debe retornar un error, en casso de no existir un error se retorna null
+        if (utils.isNumeric(value!)) {
+          return null; // es un mnumero
+        } else {
+          return 'Sólo, números!';
+        }
+      },
     );
   }
 
@@ -65,9 +89,16 @@ class ProductPage extends StatelessWidget {
           ),
         ),
       ),
-      onPressed: () {},
+      onPressed: _sudmit,
       icon: Icon(Icons.save),
       label: Text('Guardar'),
     );
+  }
+
+  void _sudmit() {
+    if (!formKey.currentState!.validate())
+      return; //si el formulario no es valido
+
+    //formKey.currentState!.validate(); //Si el formulario es valido retorna un true, de los contrario un false
   }
 }
