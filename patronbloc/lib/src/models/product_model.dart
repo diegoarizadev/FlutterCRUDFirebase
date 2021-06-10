@@ -4,20 +4,20 @@ ProductModel productModelFromJson(String str) => ProductModel.fromJson(
     json.decode(str)); //Recibe un String y retorna un modelo.
 
 String productModelToJson(ProductModel data) =>
-    json.encode(data.toJson()); //Recibe un modelo y lo genera aun Json.
+    json.encode(data.toJson()); //Recibe un modelo y lo retorna como un String
 
 class ProductModel {
   ProductModel({
     this.id = '',
     this.titulo = '',
-    this.valor = 0.0,
+    this.valor = 0,
     this.disponible = true,
     this.fotoUrl = '',
   });
 
   String? id;
   String titulo;
-  double valor;
+  int valor;
   bool disponible;
   String fotoUrl;
 

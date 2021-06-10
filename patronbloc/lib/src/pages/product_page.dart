@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:patronbloc/src/models/product_model.dart';
+import 'package:patronbloc/src/providers/productos_provider.dart';
 import 'package:patronbloc/src/utils/utils.dart' as utils;
 
 class ProductPage extends StatefulWidget {
@@ -12,6 +13,7 @@ class ProductPage extends StatefulWidget {
 class _ProductPageState extends State<ProductPage> {
   final formKey = GlobalKey<FormState>();
   ProductModel product = new ProductModel();
+  final productProvider = new ProductsProvider();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -77,8 +79,8 @@ class _ProductPageState extends State<ProductPage> {
       decoration: InputDecoration(
         labelText: 'Valor',
       ),
-      onSaved: (value) => product.valor = value!
-          as double, //Se ejecuta despues de validado el campo y asigna el valor al modelo
+      onSaved: (value) => product.valor = int.parse(
+          value!), //Se ejecuta despues de validado el campo y asigna el valor al modelo
       validator: (value) {
         //Se debe retornar un error, en casso de no existir un error se retorna null
         if (utils.isNumeric(value!)) {
@@ -106,11 +108,19 @@ class _ProductPageState extends State<ProductPage> {
   }
 
   void _sudmit() {
+    print('_sudmit');
+
     if (!formKey.currentState!.validate())
       return; //si el formulario no es valido
 
     formKey.currentState!
         .save(); //instrucciones para ejeucar el OnSave de Widgets, se ejecuta despues de las validaciones.
+
+    print(product.disponible);
+    print(product.titulo);
+    print(product.valor);
+
+    productProvider.createProduct(product);
 
     //formKey.currentState!.validate(); //Si el formulario es valido retorna un true, de los contrario un false
   }
