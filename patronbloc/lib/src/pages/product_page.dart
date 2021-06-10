@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:patronbloc/src/models/product_model.dart';
 import 'package:patronbloc/src/utils/utils.dart' as utils;
 
 class ProductPage extends StatefulWidget {
@@ -10,6 +11,7 @@ class ProductPage extends StatefulWidget {
 
 class _ProductPageState extends State<ProductPage> {
   final formKey = GlobalKey<FormState>();
+  ProductModel product = new ProductModel();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,6 +37,7 @@ class _ProductPageState extends State<ProductPage> {
               children: [
                 _createName(),
                 _createPrice(),
+                _createAvailable(),
                 _createButton(),
               ],
             ),
@@ -46,10 +49,13 @@ class _ProductPageState extends State<ProductPage> {
 
   _createName() {
     return TextFormField(
+      initialValue: product.titulo, //Valor inicial
       textCapitalization: TextCapitalization.sentences,
       decoration: InputDecoration(
         labelText: 'Nombre del Producto',
       ),
+      onSaved: (value) => product.titulo =
+          value!, //Se ejecuta despues de validado el campo y asigna el valor al modelo
       validator: (value) {
         //Se debe retornar un error, en casso de no existir un error se retorna null
         if (value!.length < 3) {
@@ -63,12 +69,16 @@ class _ProductPageState extends State<ProductPage> {
 
   _createPrice() {
     return TextFormField(
+      initialValue: product.valor
+          .toString(), //Valor inicial, se muestra el valor que tiene actualmente es el modelo.
       keyboardType: TextInputType.numberWithOptions(
           decimal:
               true), //Tipo de teclado numerico y habilite el decimal o punto en el teclado.
       decoration: InputDecoration(
         labelText: 'Valor',
       ),
+      onSaved: (value) => product.valor = value!
+          as double, //Se ejecuta despues de validado el campo y asigna el valor al modelo
       validator: (value) {
         //Se debe retornar un error, en casso de no existir un error se retorna null
         if (utils.isNumeric(value!)) {
@@ -99,6 +109,20 @@ class _ProductPageState extends State<ProductPage> {
     if (!formKey.currentState!.validate())
       return; //si el formulario no es valido
 
+    formKey.currentState!
+        .save(); //instrucciones para ejeucar el OnSave de Widgets, se ejecuta despues de las validaciones.
+
     //formKey.currentState!.validate(); //Si el formulario es valido retorna un true, de los contrario un false
+  }
+
+  _createAvailable() {
+    return SwitchListTile(
+      value: product.disponible,
+      title: Text('Disponible'),
+      activeColor: Colors.deepPurple,
+      onChanged: (value) => setState(() {
+        product.disponible = value;
+      }),
+    );
   }
 }
