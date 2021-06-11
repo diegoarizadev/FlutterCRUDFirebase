@@ -52,10 +52,19 @@ class HomePage extends StatelessWidget {
   }
 
   Widget _createItemProduct(ProductModel product, BuildContext context) {
-    return ListTile(
-      title: Text('${product.titulo} - ${product.valor}'),
-      subtitle: Text(product.id.toString()),
-      onTap: () => Navigator.pushNamed(context, 'product'),
+    return Dismissible(
+      key: UniqueKey(),
+      background: Container(
+        color: Colors.red,
+      ),
+      onDismissed: (direction) {
+        //TODO: Eliminar el producto.
+      },
+      child: ListTile(
+        title: Text('${product.titulo} - ${product.valor}'),
+        subtitle: Text(product.id.toString()),
+        onTap: () => Navigator.pushNamed(context, 'product'),
+      ),
     );
   }
 }
