@@ -15,6 +15,7 @@ class _ProductPageState extends State<ProductPage> {
   ProductModel product = new ProductModel();
   final productProvider = new ProductsProvider();
   final scaffoldKey = GlobalKey<ScaffoldState>();
+  bool _save = false;
   @override
   Widget build(BuildContext context) {
     final prodData =
@@ -110,7 +111,7 @@ class _ProductPageState extends State<ProductPage> {
           ),
         ),
       ),
-      onPressed: _sudmit,
+      onPressed: (_save) ? null : _sudmit,
       icon: Icon(Icons.save),
       label: dataProd.id.isNotEmpty ? Text('Editar') : Text('Guardar'),
     );
@@ -125,9 +126,9 @@ class _ProductPageState extends State<ProductPage> {
     formKey.currentState!
         .save(); //instrucciones para ejeucar el OnSave de Widgets, se ejecuta despues de las validaciones.
 
-    print(product.disponible);
-    print(product.titulo);
-    print(product.valor);
+    setState(() {
+      _save = true;
+    });
 
     if (product.id.isEmpty) {
       productProvider.createProduct(product);
@@ -136,6 +137,8 @@ class _ProductPageState extends State<ProductPage> {
       productProvider.editProduct(product);
       seeSnackbar('Registro actualizado 👍🏻');
     }
+
+    Navigator.pop(context); //Retorna a la pantalla anterior.
 
     //formKey.currentState!.validate(); //Si el formulario es valido retorna un true, de los contrario un false
   }
