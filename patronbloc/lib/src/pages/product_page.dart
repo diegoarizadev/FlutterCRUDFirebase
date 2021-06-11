@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:patronbloc/src/models/product_model.dart';
 import 'package:patronbloc/src/providers/productos_provider.dart';
 import 'package:patronbloc/src/utils/utils.dart' as utils;
+import 'package:image_picker/image_picker.dart';
 
 class ProductPage extends StatefulWidget {
   //const ProductPage({Key? key}) : super(key: key);
@@ -16,6 +19,7 @@ class _ProductPageState extends State<ProductPage> {
   final productProvider = new ProductsProvider();
   final scaffoldKey = GlobalKey<ScaffoldState>();
   bool _save = false;
+  late final File _photo;
   @override
   Widget build(BuildContext context) {
     final prodData =
@@ -31,11 +35,11 @@ class _ProductPageState extends State<ProductPage> {
         title: Text('Producto'),
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: _selectedPhoto,
             icon: Icon(Icons.photo_size_select_actual),
           ),
           IconButton(
-            onPressed: () {},
+            onPressed: _capturePhoto,
             icon: Icon(Icons.camera_alt),
           ),
         ],
@@ -47,6 +51,7 @@ class _ProductPageState extends State<ProductPage> {
             key: formKey,
             child: Column(
               children: [
+                _seePhoto(),
                 _createName(),
                 _createPrice(),
                 _createAvailable(),
@@ -161,5 +166,36 @@ class _ProductPageState extends State<ProductPage> {
     );
 
     ScaffoldMessenger.of(context).showSnackBar(snack);
+  }
+
+  _selectedPhoto() async {
+    final _picker = ImagePicker();
+
+    final pickedFile = await _picker.getImage(
+      source: ImageSource.gallery,
+    );
+
+    _photo = File(pickedFile!.path);
+
+    if (_photo != null) {
+      product.fotoUrl = '';
+    }
+
+    setState(() {});
+  }
+
+  void _capturePhoto() {}
+
+  _seePhoto() {
+    if (product.fotoUrl.isNotEmpty) {
+      return Container();
+    } else {
+      return Image(
+        image: AssetImage(_photo?.path ??
+            'assets/no-image.png'), //Si la fotografia tiene un valor la muestra, de lo contrario muestra el asset.
+        height: 300.0,
+        fit: BoxFit.cover,
+      );
+    }
   }
 }
