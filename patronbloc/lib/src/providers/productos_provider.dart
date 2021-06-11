@@ -57,4 +57,16 @@ class ProductsProvider {
 
     return products;
   }
+
+  Future<int> deleteProducts(String? idProduct) async {
+    //Eliminar Producto.
+    final _uriS = Uri.https(_urlFirebase, '/productos/$idProduct.json');
+    //print(_uriS);
+
+    http.Response response = await http.delete(_uriS); //retorna un future
+
+    print(json.decode(response.body));
+
+    return 1;
+  }
 }

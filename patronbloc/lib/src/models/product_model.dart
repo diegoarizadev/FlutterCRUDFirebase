@@ -15,7 +15,7 @@ class ProductModel {
     this.fotoUrl = '',
   });
 
-  String? id;
+  String id;
   String titulo;
   int valor;
   bool disponible;
