@@ -3,9 +3,15 @@ import 'package:patronbloc/src/models/product_model.dart';
 import 'package:patronbloc/src/providers/productos_provider.dart';
 //import 'package:patronbloc/src/bloc/provider.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   //const HomePage({Key key}) : super(key: key);
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   final productoProvider = new ProductsProvider();
+
   @override
   Widget build(BuildContext context) {
     //final bloc = ProviderInheritedWidget.of(context);
@@ -21,7 +27,10 @@ class HomePage extends StatelessWidget {
 
   _createButton(BuildContext context) {
     return FloatingActionButton(
-      onPressed: () => Navigator.pushNamed(context, 'product'),
+      onPressed: () => Navigator.pushNamed(
+        context,
+        'product',
+      ).then((value) => {setState(() {})}),
       child: Icon(Icons.add),
       backgroundColor: Colors.purple,
     );
@@ -63,7 +72,11 @@ class HomePage extends StatelessWidget {
       child: ListTile(
         title: Text('${product.titulo} - ${product.valor}'),
         subtitle: Text(product.id),
-        onTap: () => Navigator.pushNamed(context, 'product'),
+        onTap: () => Navigator.pushNamed(
+          context,
+          'product',
+          arguments: product, //Se envia el producto como argumento.
+        ).then((value) => {setState(() {})}),
       ),
     );
   }

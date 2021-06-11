@@ -14,9 +14,18 @@ class _ProductPageState extends State<ProductPage> {
   final formKey = GlobalKey<FormState>();
   ProductModel product = new ProductModel();
   final productProvider = new ProductsProvider();
+  final scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
+    final prodData =
+        ModalRoute.of(context)!.settings.arguments; //se captura el argumento.
+
+    if (prodData != null) {
+      product = prodData as ProductModel; //Se reinicializa el product.
+    }
+
     return Scaffold(
+      key: scaffoldKey,
       appBar: AppBar(
         title: Text('Producto'),
         actions: [
@@ -40,7 +49,7 @@ class _ProductPageState extends State<ProductPage> {
                 _createName(),
                 _createPrice(),
                 _createAvailable(),
-                _createButton(),
+                _createButton(product),
               ],
             ),
           ), //Parecido a un formulario HTML pero es un Container
@@ -92,7 +101,7 @@ class _ProductPageState extends State<ProductPage> {
     );
   }
 
-  _createButton() {
+  _createButton(ProductModel dataProd) {
     return ElevatedButton.icon(
       style: ButtonStyle(
         shape: MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -103,7 +112,7 @@ class _ProductPageState extends State<ProductPage> {
       ),
       onPressed: _sudmit,
       icon: Icon(Icons.save),
-      label: Text('Guardar'),
+      label: dataProd.id.isNotEmpty ? Text('Editar') : Text('Guardar'),
     );
   }
 
@@ -120,7 +129,13 @@ class _ProductPageState extends State<ProductPage> {
     print(product.titulo);
     print(product.valor);
 
-    productProvider.createProduct(product);
+    if (product.id.isEmpty) {
+      productProvider.createProduct(product);
+      seeSnackbar('Registro guardado 😃');
+    } else {
+      productProvider.editProduct(product);
+      seeSnackbar('Registro actualizado 👍🏻');
+    }
 
     //formKey.currentState!.validate(); //Si el formulario es valido retorna un true, de los contrario un false
   }
@@ -134,5 +149,14 @@ class _ProductPageState extends State<ProductPage> {
         product.disponible = value;
       }),
     );
+  }
+
+  void seeSnackbar(String message) {
+    final snack = SnackBar(
+      content: Text(message),
+      duration: Duration(milliseconds: 1500),
+    );
+
+    ScaffoldMessenger.of(context).showSnackBar(snack);
   }
 }

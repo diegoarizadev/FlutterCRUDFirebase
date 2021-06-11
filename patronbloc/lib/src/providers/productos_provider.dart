@@ -69,4 +69,18 @@ class ProductsProvider {
 
     return 1;
   }
+
+  Future<bool> editProduct(ProductModel product) async {
+    final _uriS = Uri.https(_urlFirebase, '/productos/${product.id}.json');
+
+    http.Response response = await http.put(_uriS,
+        //headers: {"Content-Type": "application/json"},
+        body: productModelToJson(product)); //retorna un future
+
+    final decodedData = json.decode(response.body);
+
+    print(decodedData);
+
+    return true;
+  }
 }
