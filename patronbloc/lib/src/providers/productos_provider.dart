@@ -11,8 +11,8 @@ class ProductsProvider {
   final String _urlFirebase =
       'flutterdev-ba32a-default-rtdb.firebaseio.com'; //Base de datos en FireBase
 
-  final String _uploadPreset = 'dgo9tu4c';
-  final String _cloudName = 'dayuc982l';
+  final String _uploadPreset = '';
+  final String _cloudName = '';
 
 //Insertar Productos.
   Future<bool> createProduct(ProductModel product) async {
