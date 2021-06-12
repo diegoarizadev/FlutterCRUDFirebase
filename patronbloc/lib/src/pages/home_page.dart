@@ -62,22 +62,38 @@ class _HomePageState extends State<HomePage> {
 
   Widget _createItemProduct(ProductModel product, BuildContext context) {
     return Dismissible(
-      key: UniqueKey(),
-      background: Container(
-        color: Colors.red,
-      ),
-      onDismissed: (direction) {
-        productoProvider.deleteProducts(product.id);
-      },
-      child: ListTile(
-        title: Text('${product.titulo} - ${product.valor}'),
-        subtitle: Text(product.id),
-        onTap: () => Navigator.pushNamed(
-          context,
-          'product',
-          arguments: product, //Se envia el producto como argumento.
-        ).then((value) => {setState(() {})}),
-      ),
-    );
+        key: UniqueKey(),
+        background: Container(
+          color: Colors.red,
+        ),
+        onDismissed: (direction) {
+          productoProvider.deleteProducts(product.id);
+        },
+        child: Card(
+          child: Column(
+            children: [
+              (product.fotoUrl == '')
+                  ? Image(
+                      image: AssetImage('assets/no-image.png'),
+                    )
+                  : FadeInImage(
+                      placeholder: AssetImage('assets/jar-loading.gif'),
+                      image: NetworkImage(product.fotoUrl),
+                      height: 300.0,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                    ),
+              ListTile(
+                title: Text('${product.titulo} - ${product.valor}'),
+                subtitle: Text(product.id),
+                onTap: () => Navigator.pushNamed(
+                  context,
+                  'product',
+                  arguments: product, //Se envia el producto como argumento.
+                ).then((value) => {setState(() {})}),
+              ),
+            ],
+          ),
+        ));
   }
 }
