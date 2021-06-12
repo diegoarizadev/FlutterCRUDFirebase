@@ -19,7 +19,7 @@ class _ProductPageState extends State<ProductPage> {
   final productProvider = new ProductsProvider();
   final scaffoldKey = GlobalKey<ScaffoldState>();
   bool _save = false;
-  late final File _photo;
+  File photo = File('');
   @override
   Widget build(BuildContext context) {
     final prodData =
@@ -169,33 +169,47 @@ class _ProductPageState extends State<ProductPage> {
   }
 
   _selectedPhoto() async {
-    final _picker = ImagePicker();
-
-    final pickedFile = await _picker.getImage(
-      source: ImageSource.gallery,
-    );
-
-    _photo = File(pickedFile!.path);
-
-    if (_photo != null) {
-      product.fotoUrl = '';
-    }
-
-    setState(() {});
+    _processImage(ImageSource.gallery);
   }
 
-  void _capturePhoto() {}
+  void _capturePhoto() async {
+    _processImage(ImageSource.camera);
+  }
 
   _seePhoto() {
+    print('product.fotoUrl : ${product.fotoUrl}');
+    print('photo.path: ${photo.path}');
+
     if (product.fotoUrl.isNotEmpty) {
-      return Container();
-    } else {
+      print('product.fotoUrl.isNotEmpty');
       return Image(
-        image: AssetImage(_photo?.path ??
-            'assets/no-image.png'), //Si la fotografia tiene un valor la muestra, de lo contrario muestra el asset.
+        image: AssetImage(photo.path),
         height: 300.0,
         fit: BoxFit.cover,
       );
+    } else {
+      return FadeInImage(
+        image: NetworkImage(product.fotoUrl.isNotEmpty
+            ? product.fotoUrl
+            : 'https://i.pinimg.com/originals/f3/fe/8c/f3fe8c98757ee3d1ec89c8e74ace50fe.jpg'), //Url de la imagen en algun servicio.
+        placeholder: AssetImage(
+            (photo.path.isEmpty) ? photo.path : 'assets/jar-loading.gif'),
+        height: 300.0,
+        fit: BoxFit.contain,
+      );
     }
+  }
+
+  _processImage(ImageSource origen) async {
+    final picker = ImagePicker();
+
+    final pickedFile = await picker.getImage(source: origen);
+    print('pickedFile: ${pickedFile!.path}');
+    setState(() {
+      if (pickedFile != null) {
+        photo = File(pickedFile.path);
+        product.fotoUrl = pickedFile.path;
+      }
+    });
   }
 }
