@@ -1,12 +1,18 @@
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:http_parser/http_parser.dart';
 import 'package:patronbloc/src/models/product_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:mime_type/mime_type.dart';
 
 class ProductsProvider {
 //Peticiones Http
   final String _urlFirebase =
       'flutterdev-ba32a-default-rtdb.firebaseio.com'; //Base de datos en FireBase
+
+  final String _uploadPreset = 'dgo9tu4c';
+  final String _cloudName = 'dayuc982l';
 
 //Insertar Productos.
   Future<bool> createProduct(ProductModel product) async {
@@ -82,5 +88,36 @@ class ProductsProvider {
     print(decodedData);
 
     return true;
+  }
+
+  Future<String> upLoadImagen(File imagen) async {
+    final url = Uri.parse(
+        'https://api.cloudinary.com/v1_1/$_cloudName/image/upload?upload_preset=$_uploadPreset');
+    final mimeType =
+        mime(imagen.path)!.split('/'); //identificar el tipo de image/jpeg
+
+    final imageUploadRequest = http.MultipartRequest('POST', url); //Request
+
+    final file = await http.MultipartFile.fromPath(
+      'file', imagen.path, //Adjuntar la imagen al request
+      contentType: MediaType(mimeType[0], mimeType[1]),
+    );
+
+    imageUploadRequest.files.add(file);
+
+    final streamResponse =
+        await imageUploadRequest.send(); //Ejecuta la petición.
+    final resp = await http.Response.fromStream(streamResponse);
+
+    if (resp.statusCode != 200 && resp.statusCode != 201) {
+      print('Algo salio mal');
+      print(resp.body);
+      return ''; //Se retorna Vacio.
+    }
+
+    final respData = json.decode(resp.body);
+    print(respData);
+
+    return respData['secure_url']; //retorna la url de la imagenx
   }
 }

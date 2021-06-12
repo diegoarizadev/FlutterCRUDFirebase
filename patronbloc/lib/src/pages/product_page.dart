@@ -19,7 +19,7 @@ class _ProductPageState extends State<ProductPage> {
   final productProvider = new ProductsProvider();
   final scaffoldKey = GlobalKey<ScaffoldState>();
   bool _save = false;
-  File photo = File('');
+  File photo = File(''); //Inicialización.
   @override
   Widget build(BuildContext context) {
     final prodData =
@@ -122,7 +122,7 @@ class _ProductPageState extends State<ProductPage> {
     );
   }
 
-  void _sudmit() {
+  void _sudmit() async {
     print('_sudmit');
 
     if (!formKey.currentState!.validate())
@@ -134,6 +134,11 @@ class _ProductPageState extends State<ProductPage> {
     setState(() {
       _save = true;
     });
+
+    if (photo != null) {
+      product.fotoUrl =
+          await productProvider.upLoadImagen(photo); //Cargar imagen en la nube
+    }
 
     if (product.id.isEmpty) {
       productProvider.createProduct(product);
@@ -180,20 +185,26 @@ class _ProductPageState extends State<ProductPage> {
     print('product.fotoUrl : ${product.fotoUrl}');
     print('photo.path: ${photo.path}');
 
-    if (product.fotoUrl.isNotEmpty) {
-      print('product.fotoUrl.isNotEmpty');
+    if (product.fotoUrl.isEmpty && photo.path.isEmpty) {
+      print('product.fotoUrl.isEmpty');
+      return Image(
+        image: AssetImage('assets/no-image.png'),
+        height: 300.0,
+        fit: BoxFit.cover,
+      );
+    } else if (photo.path.isNotEmpty) {
+      print('photo.path.isNotEmpty');
+
       return Image(
         image: AssetImage(photo.path),
         height: 300.0,
         fit: BoxFit.cover,
       );
     } else {
+      print('!!product.fotoUrl.isNotEmpty');
       return FadeInImage(
-        image: NetworkImage(product.fotoUrl.isNotEmpty
-            ? product.fotoUrl
-            : 'https://i.pinimg.com/originals/f3/fe/8c/f3fe8c98757ee3d1ec89c8e74ace50fe.jpg'), //Url de la imagen en algun servicio.
-        placeholder: AssetImage(
-            (photo.path.isEmpty) ? photo.path : 'assets/jar-loading.gif'),
+        image: NetworkImage(product.fotoUrl),
+        placeholder: AssetImage('assets/jar-loading.gif'),
         height: 300.0,
         fit: BoxFit.contain,
       );
